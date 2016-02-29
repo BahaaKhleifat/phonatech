@@ -18,6 +18,101 @@ namespace Phonatech
 
         }
 
+
+
+
+
+        /// <summary>
+        /// Generate the tower coverage
+        /// </summary>
+        public void GenerateTowerCoverage(Towers pTowers)
+        {
+            IWorkspaceEdit pWorkspaceEdit;
+            pWorkspaceEdit = (IWorkspaceEdit)this._workspace;
+            try
+            { 
+             IFeatureWorkspace pFWorkspace = (IFeatureWorkspace)pWorkspaceEdit;
+            
+             IFeatureClass pTowerRangeFC = pFWorkspace.OpenFeatureClass("TowerRange");
+         
+    
+            pWorkspaceEdit.StartEditing(true);
+            pWorkspaceEdit.StartEditOperation();
+            
+            //delete all ranges , we should later change that to delete only dirty towers
+            IFeatureCursor pcursor = pTowerRangeFC.Update(null, false);
+            IFeature pfeaturerange =  pcursor.NextFeature();
+                while(pfeaturerange != null)
+                {
+                    //we need to change that later 
+                    pfeaturerange.Delete();
+
+                    pfeaturerange = pcursor.NextFeature();
+                }
+
+            foreach (Tower pTower in pTowers.Items) { 
+ 
+            ITopologicalOperator pTopo = (ITopologicalOperator)pTower.TowerLocation;
+
+            IPolygon range3Bars = (IPolygon)pTopo.Buffer(pTower.TowerCoverage / 3);
+            IPolygon range2BarsWhole = (IPolygon)pTopo.Buffer((pTower.TowerCoverage * 2) / 3);
+            IPolygon range1BarsWhole = (IPolygon)pTopo.Buffer(pTower.TowerCoverage);
+
+            ITopologicalOperator pIntTopo = (ITopologicalOperator)range2BarsWhole;
+
+            ITopologicalOperator pIntTopo1 = (ITopologicalOperator)range1BarsWhole;
+
+
+            IPolygon range2BarsDonut = (IPolygon)pIntTopo.SymmetricDifference(range3Bars); //,esriGeometryDimension.esriGeometry2Dimension); 
+            IPolygon range1BarsDonut = (IPolygon)pIntTopo1.SymmetricDifference(range2BarsWhole); //,esriGeometryDimension.esriGeometry2Dimension); 
+
+
+            IFeature pFeature = pTowerRangeFC.CreateFeature();
+
+            pFeature.set_Value(pFeature.Fields.FindField("TOWERID"), "T04");
+            pFeature.set_Value(pFeature.Fields.FindField("RANGE"), 3);
+
+            pFeature.Shape = range3Bars;
+            pFeature.Store();
+
+
+            IFeature pFeature2Bar = pTowerRangeFC.CreateFeature();
+
+            pFeature2Bar.set_Value(pFeature.Fields.FindField("TOWERID"), "T04");
+            pFeature2Bar.set_Value(pFeature.Fields.FindField("RANGE"), 2);
+
+            pFeature2Bar.Shape = range2BarsDonut;
+            pFeature2Bar.Store();
+
+             
+            IFeature pFeature1Bar = pTowerRangeFC.CreateFeature();
+
+            pFeature1Bar.set_Value(pFeature1Bar.Fields.FindField("TOWERID"), "T04");
+            pFeature1Bar.set_Value(pFeature1Bar.Fields.FindField("RANGE"), 1);
+
+            pFeature1Bar.Shape = range1BarsDonut;
+            pFeature1Bar.Store();
+
+
+
+            }
+
+
+            pWorkspaceEdit.StopEditOperation();
+            pWorkspaceEdit.StopEditing(true);
+
+                }
+            catch(Exception ex)
+            {
+                //if anything went wrong, just roll back
+                pWorkspaceEdit.AbortEditOperation();
+                System.Windows.Forms.MessageBox.Show(ex.ToString());
+            }
+
+        }
+
+
+
         public Tower GetTower(IFeature pTowerFeature)
         {
             Tower tower = new Tower();
@@ -80,6 +175,26 @@ namespace Phonatech
             
         }
 
+        /// <summary>
+        /// return all towers
+        /// </summary>
+        /// <returns></returns>
+        public Towers GetTowers()
+        {
+            Towers towers = new Towers();
+            IFeatureWorkspace pFWorkspace = (IFeatureWorkspace)_workspace;
+            IFeatureClass pTowerFC = pFWorkspace.OpenFeatureClass("Towers");
 
+            IFeatureCursor pFcursor = pTowerFC.Search(null, false);
+            IFeature pFeature = pFcursor.NextFeature();
+            while (pFeature != null)
+            {
+                Tower tower = this.GetTower(pFeature);
+                towers.Items.Add(tower);
+                pFeature = pFcursor.NextFeature();
+            }
+
+            return towers;
+        }
     }
 }

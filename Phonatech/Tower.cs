@@ -1,4 +1,5 @@
-﻿using ESRI.ArcGIS.Geometry;
+﻿using ESRI.ArcGIS.Geodatabase;
+using ESRI.ArcGIS.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,11 @@ namespace Phonatech
     public class Tower
     {
 
+        public Tower()
+        {
+            //hard coded for now..
+            TowerCoverage = 100;
+        }
         /// <summary>
         /// This is the id of the tower
         /// </summary>
