@@ -2,6 +2,7 @@
 using ESRI.ArcGIS.Geometry;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 
@@ -12,10 +13,42 @@ namespace Phonatech
 
         private IWorkspace _workspace;
 
+        private DataTable _towerdetails;
+
         public TowerManager(IWorkspace pWorkspace)
         {
             _workspace = pWorkspace;
 
+            //read the tower details table
+            IFeatureWorkspace pFWorkspace = (IFeatureWorkspace)_workspace;
+            ITable pTableTowerDetails = pFWorkspace.OpenTable("TowerDetails");
+            ICursor pCursor = pTableTowerDetails.Search(null, false);
+            IRow pRow = pCursor.NextRow();
+            _towerdetails = new DataTable();
+
+
+            _towerdetails.Columns.Add("TowerType");
+            _towerdetails.Columns.Add("TowerCoverage");
+            _towerdetails.Columns.Add("TowerCost");
+            _towerdetails.Columns.Add("TowerHeight");
+            _towerdetails.Columns.Add("TowerBaseArea");
+
+
+            while (pRow != null )
+            {
+
+                DataRow dtRow = _towerdetails.NewRow();
+                dtRow["TowerType"] = pRow.get_Value(pRow.Fields.FindField("TowerType"));
+                dtRow["TowerCoverage"] = pRow.get_Value(pRow.Fields.FindField("TowerCoverage"));
+                dtRow["TowerCost"] = pRow.get_Value(pRow.Fields.FindField("TowerCost"));
+                dtRow["TowerHeight"] = pRow.get_Value(pRow.Fields.FindField("TowerHeight"));
+                dtRow["TowerBaseArea"] = pRow.get_Value(pRow.Fields.FindField("TowerBaseArea"));
+
+                _towerdetails.Rows.Add(dtRow);
+                _towerdetails.AcceptChanges();
+
+                pRow = pCursor.NextRow();
+            }
         }
 
 
@@ -120,6 +153,18 @@ namespace Phonatech
             tower.NetworkBand = pTowerFeature.get_Value(pTowerFeature.Fields.FindField("NETWORKBAND"));
             tower.TowerType = pTowerFeature.get_Value(pTowerFeature.Fields.FindField("TOWERTYPE"));
             tower.TowerLocation = (IPoint) pTowerFeature.Shape;
+            
+            //search for the tower details ..
+
+            foreach(DataRow r in _towerdetails.Rows)
+               if (r["TowerType"].ToString() == tower.TowerType)
+               {
+                   tower.TowerCoverage =double.Parse( r["TowerCoverage"].ToString());
+                   tower.TowerCost = double.Parse( r["TowerCost"].ToString());
+                   tower.TowerBaseArea = double.Parse(r["TowerBaseArea"].ToString());
+                   tower.TowerHeight = double.Parse(r["TowerHeight"].ToString());
+               }
+
             return tower;
 
         }
