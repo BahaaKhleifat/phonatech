@@ -102,7 +102,7 @@ namespace Phonatech
 
             IFeature pFeature = pTowerRangeFC.CreateFeature();
 
-            pFeature.set_Value(pFeature.Fields.FindField("TOWERID"), "T04");
+            pFeature.set_Value(pFeature.Fields.FindField("TOWERID"),pTower.ID);
             pFeature.set_Value(pFeature.Fields.FindField("RANGE"), 3);
 
             pFeature.Shape = range3Bars;
@@ -111,7 +111,7 @@ namespace Phonatech
 
             IFeature pFeature2Bar = pTowerRangeFC.CreateFeature();
 
-            pFeature2Bar.set_Value(pFeature.Fields.FindField("TOWERID"), "T04");
+            pFeature2Bar.set_Value(pFeature.Fields.FindField("TOWERID"), pTower.ID);
             pFeature2Bar.set_Value(pFeature.Fields.FindField("RANGE"), 2);
 
             pFeature2Bar.Shape = range2BarsDonut;
@@ -120,7 +120,7 @@ namespace Phonatech
              
             IFeature pFeature1Bar = pTowerRangeFC.CreateFeature();
 
-            pFeature1Bar.set_Value(pFeature1Bar.Fields.FindField("TOWERID"), "T04");
+            pFeature1Bar.set_Value(pFeature1Bar.Fields.FindField("TOWERID"), pTower.ID);
             pFeature1Bar.set_Value(pFeature1Bar.Fields.FindField("RANGE"), 1);
 
             pFeature1Bar.Shape = range1BarsDonut;

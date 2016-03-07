@@ -33,9 +33,18 @@ namespace Phonatech
 
             IFeatureLayer pfeaturelayer = (IFeatureLayer) pMxdoc.ActiveView.FocusMap.Layer[0];
             IDataset pDS = (IDataset) pfeaturelayer.FeatureClass;
+
+             IPoint pPoint = pMxdoc.ActiveView.ScreenDisplay.DisplayTransformation.ToMapPoint(x, y);
+          
+
+            DeviceManager dm = new DeviceManager(pDS.Workspace);
+            dm.AddDevice("D01", pPoint);
+
+
+
+
             TowerManager tm = new TowerManager(pDS.Workspace);
 
-            IPoint pPoint = pMxdoc.ActiveView.ScreenDisplay.DisplayTransformation.ToMapPoint(x, y);
           //  MessageBox.Show("we have a point");
            Tower t = tm.GetNearestTower(pPoint,10);  //tm.GetTowerByID("T04");
 
