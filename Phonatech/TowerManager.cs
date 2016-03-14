@@ -53,6 +53,75 @@ namespace Phonatech
 
 
 
+        public void GenerateDeadAreas()
+        {
+            //get the service territory 
+            IWorkspaceEdit pWorkspaceEdit;
+            pWorkspaceEdit = (IWorkspaceEdit)this._workspace;
+            try
+            {
+                IFeatureWorkspace pFWorkspace = (IFeatureWorkspace)pWorkspaceEdit;
+
+                IFeatureClass pServiceTerritory = pFWorkspace.OpenFeatureClass("ServiceTerritory");
+                IFeatureCursor pFCursor= pServiceTerritory.Search(null, false);
+                IFeature pFeature = pFCursor.NextFeature();
+                if (pFeature != null)
+                {
+
+                    IGeometry pSVGeometry = pFeature.Shape;
+                    IGeometry pRecptionGeometry = null;
+                    //union all the signals and get one big reception area geometry
+
+
+                    IFeatureClass pTowerRangeFC = pFWorkspace.OpenFeatureClass("TowerRange");
+
+                   IFeatureCursor pRFCursor =  pTowerRangeFC.Search(null, false);
+                     
+                   IFeature pRangeFeature = pRFCursor.NextFeature();
+                    while (pRangeFeature != null)
+                    {
+                        if (pRecptionGeometry == null)
+                            pRecptionGeometry = pRangeFeature.Shape;
+                        else
+                        {
+                            ITopologicalOperator pTopo = (ITopologicalOperator) pRecptionGeometry;
+
+                            pRecptionGeometry = pTopo.Union(pRangeFeature.Shape);
+                        }
+
+                        pRangeFeature = pRFCursor.NextFeature();
+                    }
+
+                    ITopologicalOperator pDeadAreaTopo =(ITopologicalOperator) pSVGeometry;
+                    IGeometry DeadAreas = pDeadAreaTopo.SymmetricDifference(pRecptionGeometry);
+
+                    //edit and add to fc
+
+                    pWorkspaceEdit.StartEditing(true);
+                    pWorkspaceEdit.StartEditOperation();
+
+
+                    IFeatureClass pDeadAreasFC = pFWorkspace.OpenFeatureClass("DeadAreas");
+                    IFeature pDeadArea = pDeadAreasFC.CreateFeature();
+                    pDeadArea.Shape = DeadAreas;
+                    pDeadArea.Store();
+
+                    pWorkspaceEdit.StopEditOperation();
+                    pWorkspaceEdit.StopEditing(true);
+                    
+            
+                     
+                }
+
+            }
+            catch(Exception ex)
+            {
+                System.Windows.Forms.MessageBox.Show(ex.ToString());
+                pWorkspaceEdit.AbortEditOperation();
+            }
+
+
+        }
 
 
         /// <summary>

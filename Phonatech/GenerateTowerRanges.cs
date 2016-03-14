@@ -30,6 +30,7 @@ namespace Phonatech
             //double towerRange = 100;
             Towers towers = tm.GetTowers();
              tm.GenerateTowerCoverage(towers);
+             tm.GenerateDeadAreas();
              pMxdoc.ActiveView.Refresh();
             }
                 catch(Exception ex)
