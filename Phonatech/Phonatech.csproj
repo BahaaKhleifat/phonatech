@@ -82,6 +82,7 @@
     <Compile Include="DeviceManager.cs" />
     <Compile Include="GenerateTowerRanges.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ServiceTerritory.cs" />
     <Compile Include="SetDeviceLocation.cs" />
     <Compile Include="TestButton.cs" />
     <Compile Include="Tower.cs" />

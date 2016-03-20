@@ -62,13 +62,12 @@ namespace Phonatech
             {
                 IFeatureWorkspace pFWorkspace = (IFeatureWorkspace)pWorkspaceEdit;
 
-                IFeatureClass pServiceTerritory = pFWorkspace.OpenFeatureClass("ServiceTerritory");
-                IFeatureCursor pFCursor= pServiceTerritory.Search(null, false);
-                IFeature pFeature = pFCursor.NextFeature();
-                if (pFeature != null)
+                ServiceTerritory mainST = new ServiceTerritory(_workspace, "MAIN");
+
+                if (mainST.ServiceTerritoryFeature != null)
                 {
 
-                    IGeometry pSVGeometry = pFeature.Shape;
+                    IGeometry pSVGeometry = mainST.ServiceTerritoryFeature.Shape;
                     IGeometry pRecptionGeometry = null;
                     //union all the signals and get one big reception area geometry
 
@@ -100,7 +99,9 @@ namespace Phonatech
                     pWorkspaceEdit.StartEditing(true);
                     pWorkspaceEdit.StartEditOperation();
 
-
+                    double deadCoverage = ((IArea)DeadAreas).Area * 100 / ((IArea)pSVGeometry).Area;
+                    double receptionCoverage = 100 - deadCoverage;
+                     
                     IFeatureClass pDeadAreasFC = pFWorkspace.OpenFeatureClass("DeadAreas");
                     IFeature pDeadArea = pDeadAreasFC.CreateFeature();
                     pDeadArea.Shape = DeadAreas;
@@ -108,7 +109,9 @@ namespace Phonatech
 
                     pWorkspaceEdit.StopEditOperation();
                     pWorkspaceEdit.StopEditing(true);
-                    
+
+                    mainST.updateCoverages(deadCoverage, receptionCoverage);
+
             
                      
                 }
