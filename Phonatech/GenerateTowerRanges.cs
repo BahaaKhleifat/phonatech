@@ -24,20 +24,16 @@ namespace Phonatech
 
             IFeatureLayer pfeaturelayer = (IFeatureLayer) pMxdoc.ActiveView.FocusMap.Layer[0];
             IDataset pDS = (IDataset) pfeaturelayer.FeatureClass;
-            TowerManager tm = new TowerManager(pDS.Workspace);
-           // Tower pTower = tm.GetTowerByID("T04");
-            //range of 100 meters 
-            //double towerRange = 100;
-            Towers towers = tm.GetTowers();
-             tm.GenerateTowerCoverage(towers);
-             tm.GenerateDeadAreas();
-             pMxdoc.ActiveView.Refresh();
+            
+            ServiceTerritory main = new ServiceTerritory(pDS.Workspace, "MAIN");
+            main.GenerateReceptionArea();
+            pMxdoc.ActiveView.Refresh();
             }
-                catch(Exception ex)
+            catch(Exception ex)
             {
                 System.Windows.Forms.MessageBox.Show(ex.ToString());
 
-                }
+           }
 
         }
 
