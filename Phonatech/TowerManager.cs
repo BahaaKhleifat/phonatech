@@ -50,8 +50,7 @@ namespace Phonatech
                 pRow = pCursor.NextRow();
             }
         }
-
-
+         
 
         public void GenerateDeadAreas()
         {
@@ -68,44 +67,34 @@ namespace Phonatech
                 {
 
                     IGeometry pSVGeometry = mainST.ServiceTerritoryFeature.Shape;
-                    IGeometry pRecptionGeometry = null;
+                    //IGeometry pRecptionGeometry = mainST.getReceptionArea();
                     //union all the signals and get one big reception area geometry
-
-
-                    IFeatureClass pTowerRangeFC = pFWorkspace.OpenFeatureClass("TowerRange");
-
-                   IFeatureCursor pRFCursor =  pTowerRangeFC.Search(null, false);
-                     
-                   IFeature pRangeFeature = pRFCursor.NextFeature();
-                    while (pRangeFeature != null)
-                    {
-                        if (pRecptionGeometry == null)
-                            pRecptionGeometry = pRangeFeature.Shape;
-                        else
-                        {
-                            ITopologicalOperator pTopo = (ITopologicalOperator) pRecptionGeometry;
-
-                            pRecptionGeometry = pTopo.Union(pRangeFeature.Shape);
-                        }
-
-                        pRangeFeature = pRFCursor.NextFeature();
-                    }
-
-                    ITopologicalOperator pDeadAreaTopo =(ITopologicalOperator) pSVGeometry;
-                    IGeometry DeadAreas = pDeadAreaTopo.SymmetricDifference(pRecptionGeometry);
-
+             
                     //edit and add to fc
-
+                    IGeometry pDeadArea = mainST.getDeadArea();
                     pWorkspaceEdit.StartEditing(true);
                     pWorkspaceEdit.StartEditOperation();
 
-                    double deadCoverage = ((IArea)DeadAreas).Area * 100 / ((IArea)pSVGeometry).Area;
+                    double deadCoverage = ((IArea)pDeadArea).Area * 100 / ((IArea)pSVGeometry).Area;
                     double receptionCoverage = 100 - deadCoverage;
                      
                     IFeatureClass pDeadAreasFC = pFWorkspace.OpenFeatureClass("DeadAreas");
-                    IFeature pDeadArea = pDeadAreasFC.CreateFeature();
-                    pDeadArea.Shape = DeadAreas;
-                    pDeadArea.Store();
+
+
+                    //delete all features
+                    IFeatureCursor pcursor = pDeadAreasFC.Update(null, false);
+                    IFeature pfeaturerange = pcursor.NextFeature();
+                    while (pfeaturerange != null)
+                    {
+                        //we need to change that later 
+                        pfeaturerange.Delete();
+                        pfeaturerange = pcursor.NextFeature();
+                    }
+                     
+                    
+                    IFeature pDeadAreaFeature = pDeadAreasFC.CreateFeature();
+                    pDeadAreaFeature.Shape = pDeadArea;
+                    pDeadAreaFeature.Store();
 
                     pWorkspaceEdit.StopEditOperation();
                     pWorkspaceEdit.StopEditing(true);

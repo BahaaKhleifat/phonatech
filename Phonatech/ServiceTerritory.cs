@@ -1,4 +1,5 @@
 ﻿using ESRI.ArcGIS.Geodatabase;
+using ESRI.ArcGIS.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -48,5 +49,39 @@ namespace Phonatech
             }
         }
 
+        public IGeometry getDeadArea()
+        { 
+            ITopologicalOperator pDeadAreaTopo = (ITopologicalOperator)ServiceTerritoryFeature.Shape;
+            IGeometry DeadAreas = pDeadAreaTopo.SymmetricDifference(getReceptionArea());
+            return DeadAreas;
+        }
+
+        public IGeometry getReceptionArea()
+        {
+
+            IFeatureWorkspace pFWorkspace = (IFeatureWorkspace)((IDataset)ServiceTerritoryFeature.Class).Workspace;
+
+            IFeatureClass pTowerRangeFC = pFWorkspace.OpenFeatureClass("TowerRange");
+
+            IFeatureCursor pRFCursor = pTowerRangeFC.Search(null, false);
+            IGeometry pRecptionGeometry = null;
+
+            IFeature pRangeFeature = pRFCursor.NextFeature();
+            while (pRangeFeature != null)
+            {
+                if (pRecptionGeometry == null)
+                    pRecptionGeometry = pRangeFeature.Shape;
+                else
+                {
+                    ITopologicalOperator pTopo = (ITopologicalOperator)pRecptionGeometry;
+                    pRecptionGeometry = pTopo.Union(pRangeFeature.Shape);
+                }
+
+                pRangeFeature = pRFCursor.NextFeature();
+            }
+
+            return pRecptionGeometry;
+
+        }
     }
 }
