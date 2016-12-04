@@ -40,7 +40,7 @@ namespace Phonatech
         public void reCalculateSignal()
         {
             IFeatureWorkspace pFWorkspace = (IFeatureWorkspace)_workspace;
-           IFeatureClass  pTowerRangeFC=  pFWorkspace.OpenFeatureClass("TowerRange");
+           IFeatureClass  pTowerRangeFC=  pFWorkspace.OpenFeatureClass("sde.TowerRange");
 
            ISpatialFilter pSFilter = new SpatialFilter();
            pSFilter.Geometry = DeviceLocation;
@@ -77,7 +77,7 @@ namespace Phonatech
             pWorkspaceEdit.StartEditing(true);
             pWorkspaceEdit.StartEditOperation();
 
-            IFeatureClass pDeviceFC = pFWorkspace.OpenFeatureClass("Device");
+            IFeatureClass pDeviceFC = pFWorkspace.OpenFeatureClass("sde.Device");
             IQueryFilter pQFilter = new QueryFilter();
             pQFilter.WhereClause = "DEVICEID = '" + DeviceID + "'";
             IFeatureCursor pFCursor = pDeviceFC.Search(pQFilter, false);

@@ -21,7 +21,7 @@ namespace Phonatech
             _workspace = workspace;
             TowerManager = new TowerManager(workspace);
             IFeatureWorkspace pFWorkspace = (IFeatureWorkspace)workspace;
-            IFeatureClass pServiceTerritory = pFWorkspace.OpenFeatureClass("ServiceTerritory");
+            IFeatureClass pServiceTerritory = pFWorkspace.OpenFeatureClass("sde.ServiceTerritory");
             IQueryFilter pQFilter = new QueryFilter();
             pQFilter.WhereClause = "NAME='" + name +"'";
 
@@ -66,7 +66,7 @@ namespace Phonatech
 
             IFeatureWorkspace pFWorkspace = (IFeatureWorkspace)((IDataset)ServiceTerritoryFeature.Class).Workspace;
 
-            IFeatureClass pTowerRangeFC = pFWorkspace.OpenFeatureClass("TowerRange");
+            IFeatureClass pTowerRangeFC = pFWorkspace.OpenFeatureClass("sde.TowerRange");
 
             IFeatureCursor pRFCursor = pTowerRangeFC.Search(null, false);
             IGeometry pRecptionGeometry = null;
@@ -99,7 +99,7 @@ namespace Phonatech
         {
             Towers towers = new Towers();
             IFeatureWorkspace pFWorkspace = (IFeatureWorkspace)_workspace;
-            IFeatureClass pTowerFC = pFWorkspace.OpenFeatureClass("Towers");
+            IFeatureClass pTowerFC = pFWorkspace.OpenFeatureClass("sde.Towers");
 
             IFeatureCursor pFcursor = pTowerFC.Search(null, false);
             IFeature pFeature = pFcursor.NextFeature();
@@ -130,7 +130,7 @@ namespace Phonatech
 
                 IFeatureWorkspace pFWorkspace = (IFeatureWorkspace)pWorkspaceEdit;
 
-                IFeatureClass pTowerRangeFC = pFWorkspace.OpenFeatureClass("TowerRange");
+                IFeatureClass pTowerRangeFC = pFWorkspace.OpenFeatureClass("sde.TowerRange");
 
 
                 pWorkspaceEdit.StartEditing(true);
@@ -243,7 +243,7 @@ namespace Phonatech
                     double deadCoverage = ((IArea)pDeadArea).Area * 100 / ((IArea)pSVGeometry).Area;
                     double receptionCoverage = 100 - deadCoverage;
 
-                    IFeatureClass pDeadAreasFC = pFWorkspace.OpenFeatureClass("DeadAreas");
+                    IFeatureClass pDeadAreasFC = pFWorkspace.OpenFeatureClass("sde.DeadAreas");
 
 
                     //delete all features

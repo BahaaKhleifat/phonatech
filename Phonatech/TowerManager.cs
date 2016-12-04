@@ -87,7 +87,7 @@ namespace Phonatech
            //query the geodatabase.. 
             IFeatureWorkspace pFeatureWorkspace =(IFeatureWorkspace) _workspace;
 
-            IFeatureClass fcTower = pFeatureWorkspace.OpenFeatureClass("Towers");
+            IFeatureClass fcTower = pFeatureWorkspace.OpenFeatureClass("sde.Towers");
 
            //get the tower feature by id 
             IQueryFilter pQFilter = new QueryFilter();
@@ -121,7 +121,7 @@ namespace Phonatech
                 //query the geodatabase.. 
                 IFeatureWorkspace pFeatureWorkspace = (IFeatureWorkspace)_workspace;
 
-                IFeatureClass fcTower = pFeatureWorkspace.OpenFeatureClass("Towers");
+                IFeatureClass fcTower = pFeatureWorkspace.OpenFeatureClass("sde.Towers");
 
                 IFeatureCursor pFCursor = fcTower.Search(pSFilter, true);
                 IFeature pTowerFeature = pFCursor.NextFeature();
