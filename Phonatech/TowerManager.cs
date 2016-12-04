@@ -19,9 +19,9 @@ namespace Phonatech
         {
             _workspace = pWorkspace;
 
-            //read the tower details table
+            //read the tower details tables
             IFeatureWorkspace pFWorkspace = (IFeatureWorkspace)_workspace;
-            ITable pTableTowerDetails = pFWorkspace.OpenTable("TowerDetails");
+            ITable pTableTowerDetails = pFWorkspace.OpenTable("sde.TowerDetails");
             ICursor pCursor = pTableTowerDetails.Search(null, false);
             IRow pRow = pCursor.NextRow();
             _towerdetails = new DataTable();
