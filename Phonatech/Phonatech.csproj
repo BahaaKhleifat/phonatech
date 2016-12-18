@@ -129,6 +129,9 @@
   <ItemGroup>
     <AddInContent Include="Images\SetDeviceLocation.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Geodatabase\Phonatech.gdb\" />
+  </ItemGroup>
   <PropertyGroup>
     <ZipFileExtension>esriAddIn</ZipFileExtension>
     <AddInTargetProduct>Desktop</AddInTargetProduct>
