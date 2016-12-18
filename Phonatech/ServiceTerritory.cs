@@ -37,7 +37,11 @@ namespace Phonatech
             {
 
              pWorkspaceEdit = (IWorkspaceEdit)((IDataset)ServiceTerritoryFeature.Class).Workspace;
-            pWorkspaceEdit.StartEditing(true);
+
+                IMultiuserWorkspaceEdit pMUWorkspaceEdit = (IMultiuserWorkspaceEdit)pWorkspaceEdit;
+ 
+                pMUWorkspaceEdit.StartMultiuserEditing(esriMultiuserEditSessionMode.esriMESMVersioned);
+            //pWorkspaceEdit.StartEditing(true);
             pWorkspaceEdit.StartEditOperation();
 
             ServiceTerritoryFeature.set_Value(ServiceTerritoryFeature.Fields.FindField("DEADCOVERAGE"), deadCoverage);
@@ -133,7 +137,11 @@ namespace Phonatech
                 IFeatureClass pTowerRangeFC = pFWorkspace.OpenFeatureClass("sde.TowerRange");
 
 
-                pWorkspaceEdit.StartEditing(true);
+
+                IMultiuserWorkspaceEdit pMUWorkspaceEdit = (IMultiuserWorkspaceEdit)pWorkspaceEdit;
+
+                pMUWorkspaceEdit.StartMultiuserEditing(esriMultiuserEditSessionMode.esriMESMVersioned);
+                // pWorkspaceEdit.StartEditing(true);
                 pWorkspaceEdit.StartEditOperation();
 
                 //delete all ranges , we should later change that to delete only dirty towers
@@ -237,7 +245,11 @@ namespace Phonatech
 
                     //edit and add to fc
                     IGeometry pDeadArea = getDeadArea();
-                    pWorkspaceEdit.StartEditing(true);
+                    //pWorkspaceEdit.StartEditing(true);
+
+                    IMultiuserWorkspaceEdit pMUWorkspaceEdit = (IMultiuserWorkspaceEdit)pWorkspaceEdit;
+
+                    pMUWorkspaceEdit.StartMultiuserEditing(esriMultiuserEditSessionMode.esriMESMVersioned);
                     pWorkspaceEdit.StartEditOperation();
 
                     double deadCoverage = ((IArea)pDeadArea).Area * 100 / ((IArea)pSVGeometry).Area;

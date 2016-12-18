@@ -74,7 +74,11 @@ namespace Phonatech
 
             IFeatureWorkspace pFWorkspace = (IFeatureWorkspace)_workspace;
             IWorkspaceEdit pWorkspaceEdit = (IWorkspaceEdit)pFWorkspace;
-            pWorkspaceEdit.StartEditing(true);
+
+            IMultiuserWorkspaceEdit pMUWorkspaceEdit = (IMultiuserWorkspaceEdit)pWorkspaceEdit;
+
+            pMUWorkspaceEdit.StartMultiuserEditing(esriMultiuserEditSessionMode.esriMESMVersioned);
+            //  pWorkspaceEdit.StartEditing(true);
             pWorkspaceEdit.StartEditOperation();
 
             IFeatureClass pDeviceFC = pFWorkspace.OpenFeatureClass("sde.Device");
@@ -114,7 +118,10 @@ namespace Phonatech
 
 
             pWorkspaceEdit.StopEditOperation();
+             
+             
             pWorkspaceEdit.StopEditing(true);
+
 
 
         }
