@@ -35,7 +35,7 @@ namespace Phonatech
               IWorkspaceEdit pWorkspaceEdit = null;
             try
             {
-
+                
              pWorkspaceEdit = (IWorkspaceEdit)((IDataset)ServiceTerritoryFeature.Class).Workspace;
 
                 IMultiuserWorkspaceEdit pMUWorkspaceEdit = (IMultiuserWorkspaceEdit)pWorkspaceEdit;

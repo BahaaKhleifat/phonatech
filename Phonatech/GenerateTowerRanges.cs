@@ -22,9 +22,11 @@ namespace Phonatech
             { 
             IMxDocument pMxdoc = (IMxDocument) ArcMap.Application.Document;
 
-            IFeatureLayer pfeaturelayer = (IFeatureLayer) pMxdoc.ActiveView.FocusMap.Layer[0];
+            IFeatureLayer pfeaturelayer = (IFeatureLayer)pMxdoc.ActiveView.FocusMap.Layer[0];
             IDataset pDS = (IDataset) pfeaturelayer.FeatureClass;
-            
+
+           IVersion myVersion = (IVersion)pDS.Workspace;
+                ArcMap.Application.Caption = " My version is " + myVersion.VersionName;
             ServiceTerritory main = new ServiceTerritory(pDS.Workspace, "MAIN");
             main.GenerateReceptionArea();
             pMxdoc.ActiveView.Refresh();
