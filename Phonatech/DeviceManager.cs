@@ -25,6 +25,7 @@ namespace Phonatech
             Device device = new Device(_workspace);
             device.DeviceID = deviceid;
             device.DeviceLocation = deviceLocation;
+            device.RegisterationDate = DateTime.Now;
             device.reCalculateSignal();
             device.Store();
 

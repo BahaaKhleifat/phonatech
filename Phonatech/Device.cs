@@ -13,6 +13,7 @@ namespace Phonatech
         public Device(IWorkspace pWorkspace)
         {
             _workspace = pWorkspace;
+            RegisterationDate = DateTime.Now;
         }
         /// <summary>
         /// Signal range
@@ -23,6 +24,12 @@ namespace Phonatech
         /// The connected tower
         /// </summary>
         public Tower connectedTower { get; set; }
+
+
+        /// <summary>
+        /// The Date/Time in which the device /phone was registered to the network
+        /// </summary>
+        public DateTime RegisterationDate { get; set; }
 
         /// <summary>
         /// The device id
@@ -95,7 +102,9 @@ namespace Phonatech
                     pDeviceFeature.set_Value(pDeviceFeature.Fields.FindField("CONNECTEDTOWERID"), DBNull.Value);
              
                 pDeviceFeature.set_Value(pDeviceFeature.Fields.FindField("BARS"), Bars);
+                pDeviceFeature.set_Value(pDeviceFeature.Fields.FindField("datetime"), RegisterationDate);
                 pDeviceFeature.Shape = DeviceLocation;
+          
                 pDeviceFeature.Store();
                 
             }
