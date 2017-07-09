@@ -21,6 +21,32 @@ namespace Phonatech
 
         }
 
+
+        public void setDeviceLocation(string deviceid, IPoint pPoint, IWorkspace pWorkspace)
+        {
+
+            IMxDocument pMxdoc = (IMxDocument)ArcMap.Application.Document;
+         
+
+            DeviceManager dm = new DeviceManager(pWorkspace);
+            dm.AddDevice(deviceid, pPoint);
+
+            pMxdoc.ActiveView.Refresh();
+
+        }
+
+        public void wait(int sec)
+        {
+            DateTime dt = DateTime.Now;
+
+            while  ((DateTime.Now - dt).TotalSeconds < sec )
+            {
+                Application.DoEvents();
+                 
+            } 
+
+        }
+
         protected override void OnMouseUp(ESRI.ArcGIS.Desktop.AddIns.Tool.MouseEventArgs arg)
         {
            base.OnMouseUp(arg);
@@ -31,15 +57,28 @@ namespace Phonatech
             IMxDocument pMxdoc = (IMxDocument)ArcMap.Application.Document;
 
             IFeatureLayer pfeaturelayer = (IFeatureLayer)pMxdoc.ActiveView.FocusMap.Layer[0];
-            IDataset pDS = (IDataset)pfeaturelayer.FeatureClass;
-
             IPoint pPoint = pMxdoc.ActiveView.ScreenDisplay.DisplayTransformation.ToMapPoint(x, y);
+            OpenFileDialog of = new OpenFileDialog();
+            if (of.ShowDialog() == DialogResult.OK)
+            { 
+                string [] devicepoints =System.IO.File.ReadAllLines(of.FileName);
+                foreach(string dpoint in devicepoints)
+                {
+                    double dx = double.Parse(dpoint.Split(',')[0]);
+                    double dy = double.Parse(dpoint.Split(',')[1]);
 
+                    IPoint pDevicePoint = new Point();
+                    pDevicePoint.X = dx;
+                    pDevicePoint.Y = dy;
+                  
+                    setDeviceLocation("d02", pDevicePoint, ((IDataset)pfeaturelayer.FeatureClass).Workspace);
+                    wait(2);
+                }
 
-            DeviceManager dm = new DeviceManager(pDS.Workspace);
-            dm.AddDevice("D01", pPoint);
+            }
+            
 
-            pMxdoc.ActiveView.Refresh();
+            //setDeviceLocation("D01",pPoint, ((IDataset)pfeaturelayer.FeatureClass).Workspace);
         }
     }
 
